@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tutorial_app/questions.dart';
+import 'package:flutter_tutorial_app/answer.dart';
 
 void main(List<String> args) {
   runApp(MyApp());
@@ -12,21 +13,34 @@ class MyApp extends StatefulWidget {
   }
 }
 
+final questions = const [
+  {
+    'questionText': 'Любимый цвет?',
+    'answers': ['Черный', 'Белый', 'Синий', 'Красный', 'Фильдипесовый']
+  },
+  {
+    'questionText': 'Любимое животное?',
+    'answers': ['Собака', 'Кошка', 'Ёж', 'Лошадь', 'Коза']
+  },
+  {
+    'questionText': 'Любымое блюдо?',
+    'answers': ['Пельмени', 'Суши', 'Макароны', 'Лошадь в кляре', 'Молоко']
+  },
+];
+
 class _MyAppState extends State<MyApp> {
   var _questionIndex = 0;
   void _answerQuestion() {
     setState(() {
-      _questionIndex += 1;
+      if (_questionIndex < questions.length) {
+        _questionIndex += 1;
+      }
       print(_questionIndex);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    var questions = [
-      'Любимый цвет?',
-      'Любимое животное?',
-    ];
     return MaterialApp(
         home: Scaffold(
       appBar: AppBar(
@@ -34,19 +48,11 @@ class _MyAppState extends State<MyApp> {
       ),
       body: Column(
         children: [
-          Question(questions[_questionIndex]),
-          RaisedButton(
-            child: Text('Ответ 1'),
-            onPressed: _answerQuestion,
-          ),
-          RaisedButton(
-            child: Text('Ответ 2'),
-            onPressed: null,
-          ),
-          RaisedButton(
-            child: Text('Ответ 3'),
-            onPressed: null,
-          ),
+          Question(questions[_questionIndex]['questionText']),
+          ...(questions[_questionIndex]['answers'] as List<String>)
+              .map((answer) {
+            return Answer(_answerQuestion, answer);
+          }).toList()
         ],
       ),
     ));
