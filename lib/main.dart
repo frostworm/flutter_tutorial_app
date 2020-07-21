@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tutorial_app/questions.dart';
-import 'package:flutter_tutorial_app/answer.dart';
+import 'package:flutter_tutorial_app/quiz.dart';
+import 'package:flutter_tutorial_app/result.dart';
 
 void main(List<String> args) {
   runApp(MyApp());
@@ -13,29 +13,60 @@ class MyApp extends StatefulWidget {
   }
 }
 
-final questions = const [
+final _questions = const [
   {
     'questionText': 'Любимый цвет?',
-    'answers': ['Черный', 'Белый', 'Синий', 'Красный', 'Фильдипесовый']
+    'answers': [
+      {'text': 'Черный', 'score': 5},
+      {'text': 'Белый', 'score': 8},
+      {'text': 'Синий', 'score': 1},
+      {'text': 'Красный', 'score': 3},
+      {'text': 'Фильдипесовый', 'score': 20}
+    ]
   },
   {
     'questionText': 'Любимое животное?',
-    'answers': ['Собака', 'Кошка', 'Ёж', 'Лошадь', 'Коза']
+    'answers': [
+      {'text': 'Собака', 'score': 5},
+      {'text': 'Кошка', 'score': 8},
+      {'text': 'Ёж', 'score': 3},
+      {'text': 'Лошадь', 'score': 7},
+      {'text': 'Коза', 'score': 1}
+    ]
   },
   {
     'questionText': 'Любымое блюдо?',
-    'answers': ['Пельмени', 'Суши', 'Макароны', 'Лошадь в кляре', 'Молоко']
+    'answers': [
+      {'text': 'Пельмени', 'score': 10},
+      {'text': 'Суши', 'score': 12},
+      {'text': 'Макароны', 'score': 5},
+      {'text': 'Лошадь в кляре', 'score': 20},
+      {'text': 'Молоко', 'score': 1}
+    ]
   },
 ];
+var _questionIndex = 0;
+var _totalScore = 0;
 
 class _MyAppState extends State<MyApp> {
-  var _questionIndex = 0;
-  void _answerQuestion() {
+  void _answerQuestion(int score) {
+    _totalScore += score;
     setState(() {
-      if (_questionIndex < questions.length) {
-        _questionIndex += 1;
+      _questionIndex += 1;
+      if (_questionIndex < _questions.length) {
+        print('Еще есть вопросы');
+      } else {
+        print('Вопросов нет');
       }
+
       print(_questionIndex);
+    });
+  }
+
+  void _resetQuiz() {
+    setState(() {
+      _questionIndex = 0;
+      _totalScore = 0;
     });
   }
 
@@ -46,15 +77,13 @@ class _MyAppState extends State<MyApp> {
       appBar: AppBar(
         title: Text('Tutorial App'),
       ),
-      body: Column(
-        children: [
-          Question(questions[_questionIndex]['questionText']),
-          ...(questions[_questionIndex]['answers'] as List<String>)
-              .map((answer) {
-            return Answer(_answerQuestion, answer);
-          }).toList()
-        ],
-      ),
+      body: _questionIndex < _questions.length
+          ? Quiz(
+              answerQuestion: _answerQuestion,
+              questions: _questions,
+              questionIndex: _questionIndex,
+            )
+          : Result(_totalScore, _resetQuiz),
     ));
   }
 }
